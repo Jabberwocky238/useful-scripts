@@ -1,0 +1,24 @@
+FROM node:20
+ARG INSTALL_PATH=/home/ubuntu/minecraft/docker-mcsm
+ARG TZ=Asia/Shanghai
+
+ENV TZ=${TZ}
+
+RUN rm -rf /etc/apt/sources.list.d
+RUN rm /etc/apt/sources.list
+RUN touch /etc/apt/sources.list
+RUN echo 'deb https://mirrors.tencent.com/debian/ bookworm main non-free non-free-firmware contrib \
+deb-src https://mirrors.tencent.com/debian/ bookworm main non-free non-free-firmware contrib \
+deb https://mirrors.tencent.com/debian-security/ bookworm-security main \
+deb-src https://mirrors.tencent.com/debian-security/ bookworm-security main \
+deb https://mirrors.tencent.com/debian/ bookworm-updates main non-free non-free-firmware contrib \
+deb-src https://mirrors.tencent.com/debian/ bookworm-updates main non-free non-free-firmware contrib \
+deb https://mirrors.tencent.com/debian/ bookworm-backports main non-free non-free-firmware contrib \
+deb-src https://mirrors.tencent.com/debian/ bookworm-backports main non-free non-free-firmware contrib \
+' > /etc/apt/sources.list
+RUN apt update && apt install -y git
+RUN apt install -y openjdk-17-jre
+RUN git clone --single-branch -b master --depth 1 https://gitee.com/MCSManager/MCSManager-Daemon-Production $INSTALL_PATH/releases/daemon
+RUN cd $INSTALL_PATH/releases/daemon && npm i --production --registry=https://registry.npmmirror.com
+WORKDIR $INSTALL_PATH/releases/daemon
+CMD node app.js

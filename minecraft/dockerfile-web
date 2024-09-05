@@ -1,0 +1,10 @@
+FROM node:14-slim
+ARG INSTALL_PATH=/home/ubuntu/minecraft
+ARG TZ=Asia/Shanghai
+ENV TZ=${TZ}
+RUN sed -i -E 's/http:\/\/deb.debian.org/http:\/\/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+RUN apt update && apt install -y git
+RUN git clone --single-branch -b master --depth 1 https://gitee.com/MCSManager/MCSManager-Web-Production $INSTALL_PATH/releases/web
+RUN cd $INSTALL_PATH/releases/web && npm i --production --registry=https://registry.npmmirror.com
+WORKDIR $INSTALL_PATH/releases/web
+CMD node app.js

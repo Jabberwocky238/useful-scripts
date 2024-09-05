@@ -1,0 +1,77 @@
+version: "3"
+services:
+    mcsm-web:
+        container_name: mcsm-web
+        build:
+            context: .
+            dockerfile: dockerfile-web
+            args:
+                INSTALL_PATH: ${INSTALL_PATH-/home/ubuntu/minecraft}
+                TZ: ${TZ-Asia/Shanghai}
+        restart: always
+        network_mode: "host"
+        environment:
+            - PUID=0
+            - PGID=0
+            - UMASK=022
+        volumes:
+            - ${INSTALL_PATH-/home/ubuntu/minecraft}/releases/web/data:${INSTALL_PATH-/home/ubuntu/minecraft}/releases/web/data
+            - ${INSTALL_PATH-/home/ubuntu/minecraft}/releases/web/logs:${INSTALL_PATH-/home/ubuntu/minecraft}/releases/web/logs
+            - ${INSTALL_PATH-/home/ubuntu/minecraft}/releases/daemon/data/Config:${INSTALL_PATH-/home/ubuntu/minecraft}/releases/daemon/data/Config:ro
+
+    mcsmjdk17:
+        container_name: mcsmjdk17
+        build:
+            context: ./docker-mcsm-jdk17
+            dockerfile: dockerfile-daemon-jdk17
+            args:
+                INSTALL_PATH_JDK17: /home/ubuntu/minecraft/docker-mcsm-jdk17
+                TZ: ${TZ-Asia/Shanghai}
+        network_mode: "host"
+        restart: always
+        environment:
+            - PUID=0
+            - PGID=0
+            - UMASK=022
+        volumes:
+            - /home/ubuntu/minecraft/docker-mcsm-jdk17/releases/daemon/data:/home/ubuntu/minecraft/docker-mcsm/releases/daemon/data
+            - /home/ubuntu/minecraft/docker-mcsm-jdk17/releases/daemon/logs:/home/ubuntu/minecraft/docker-mcsm/releases/daemon/logs
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    # sudo docker-compose up -d --build mcsmjdk11 && sudo docker-compose logs mcsmjdk11
+    mcsmjdk11:
+        container_name: mcsmjdk11
+        build:
+            context: ./docker-mcsm-jdk11
+            dockerfile: dockerfile-daemon-jdk11
+            args:
+                TZ: Asia/Shanghai
+        network_mode: "host"
+        restart: always
+        environment:
+            - PUID=0
+            - PGID=0
+            - UMASK=022
+        volumes:
+            - /home/ubuntu/minecraft/docker-mcsm-jdk11/releases/daemon/data:/root/mcsm/releases/daemon/data
+            - /home/ubuntu/minecraft/docker-mcsm-jdk11/releases/daemon/logs:/root/mcsm/releases/daemon/logs
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    # sudo docker-compose up -d --build mcsmjdk21 && sudo docker-compose logs mcsmjdk21
+    mcsmjdk21:
+        container_name: mcsmjdk21
+        build:
+            context: ./docker-mcsm-jdk21
+            dockerfile: dockerfile-daemon-jdk21
+            args:
+                TZ: Asia/Shanghai
+        network_mode: "host"
+        restart: always
+        environment:
+            - PUID=0
+            - PGID=0
+            - UMASK=022
+        volumes:
+            - /home/ubuntu/minecraft/docker-mcsm-jdk21/releases/daemon/data:/root/mcsm/releases/daemon/data
+            - /home/ubuntu/minecraft/docker-mcsm-jdk21/releases/daemon/logs:/root/mcsm/releases/daemon/logs
+            - /var/run/docker.sock:/var/run/docker.sock:ro

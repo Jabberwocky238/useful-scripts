@@ -1,0 +1,36 @@
+# sudo docker run -it --name test1 ubuntu:20.04
+FROM ubuntu:20.04
+ARG INSTALL_PATH=/root/mcsm
+ARG TZ=Asia/Shanghai
+ARG DAEMON_PORT=24444
+
+ENV INSTALL_PATH=${INSTALL_PATH}
+ENV TZ=${TZ}
+ENV DAEMON_PORT=${DAEMON_PORT}
+
+RUN sed -i -E 's/http:\/\/archive.ubuntu.com/http:\/\/mirrors.aliyun.com/g' /etc/apt/sources.list
+RUN sed -i -E 's/http:\/\/security.ubuntu.com/http:\/\/mirrors.aliyun.com/g' /etc/apt/sources.list
+RUN apt update
+RUN apt install -y curl git
+
+RUN curl -o ~/node-v20.9.0-linux-x64.tar.gz -L https://mirrors.huaweicloud.com/nodejs/v20.9.0/node-v20.9.0-linux-x64.tar.gz
+RUN tar -xzf ~/node-v20.9.0-linux-x64.tar.gz -C ~/
+RUN ln -s ~/node-v20.9.0-linux-x64/bin/node /bin/node
+RUN ln -s ~/node-v20.9.0-linux-x64/bin/npm /bin/npm
+RUN ln -s ~/node-v20.9.0-linux-x64/bin/npx /bin/npx
+RUN ln -s ~/node-v20.9.0-linux-x64/bin/corepack /bin/corepack
+
+# java source
+RUN curl -o ~/jdk-21_linux-x64_bin.tar.gz -L https://d6.injdk.cn/openjdk/openjdk/21/openjdk-21.0.2_linux-x64_bin.tar.gz
+# RUN curl -o ~/jdk-21_linux-x64_bin.tar.gz -L https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz
+
+RUN tar -xzf ~/jdk-21_linux-x64_bin.tar.gz -C ~/
+RUN ln -s ~/jdk-21.0.2/bin/java /bin/java
+RUN echo "*************The version of java is*************" \
+    && java --version \
+    && echo "**************************************************"
+
+RUN git clone --single-branch -b master --depth 1 https://gitee.com/MCSManager/MCSManager-Daemon-Production $INSTALL_PATH/releases/daemon
+WORKDIR $INSTALL_PATH/releases/daemon
+RUN npm i --production --registry=https://registry.npmmirror.com
+CMD node /root/mcsm/releases/daemon/app.js
