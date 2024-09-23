@@ -1,12 +1,18 @@
 # Powershell 基础语法
+- 单行注释以 `#` 开头。
 
 - 变量以 `$` 开头，后跟变量名。例如：`$myVariable = "Hello, World!"`
-
 - `$PSScriptRoot`：当前脚本所在的目录路径。
 - `$PSCommandPath`：当前脚本的完整路径。
 - `$PSVersionTable`：包含 PowerShell 版本信息的哈希表。
+- `@{}`：创建哈希表。
+- `@()`：创建数组。
 
-- 单行注释以 `#` 开头。
+### 基本命令
+- 使用 `Get-Command` 命令列出可用的命令。
+```powershell
+Get-Command
+```
 
 - 使用 `Set-Alias` 命令创建别名。
 ```powershell
@@ -69,11 +75,10 @@ for ($i = 0;$i -lt $values.Length;$i++) {
 foreach ($item in $collection) {
     # 对集合中的每个项目执行的代码
 }
-
 foreach ($property in $InputObject.PSObject.Properties) {
     $hashTable[$property.Name] = ConvertTo-Hashtable $property.Value
 }
-
+# 另一种循环
 $envVars.GetEnumerator() | Sort-Object Name | ForEach-Object {
     $name = $_.Name
     $values = $_.Value -split ';'
@@ -106,11 +111,8 @@ function Sub-EnvValue {
 }
 ```
 
-
-
 ### 错误处理
 - 使用 `try`、`catch`、`finally` 和 `throw` 进行错误处理。
-
 ```powershell
 try {
 # 尝试执行的代码
