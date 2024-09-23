@@ -1,4 +1,4 @@
-# Environment
+# Environment环境变量
 ```powershell
 [EnvironmentVariableTarget]::User
 [EnvironmentVariableTarget]::Machine

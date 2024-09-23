@@ -1,4 +1,4 @@
-# powshell 基础语法
+# Powershell 基础语法
 
 - 变量以 `$` 开头，后跟变量名。例如：`$myVariable = "Hello, World!"`
 
