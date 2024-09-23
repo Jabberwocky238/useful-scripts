@@ -10,8 +10,12 @@ deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe m
 deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse \
 ' >> /etc/apt/sources.list
 
+# setup
+```bash
+sudo docker-compose up -d --build mcsmjdk11 && sudo docker-compose logs mcsmjdk11
+sudo docker-compose up -d --build mcsmjdk17 && sudo docker-compose logs mcsmjdk17
+sudo docker-compose up -d --build mcsmjdk21 && sudo docker-compose logs mcsmjdk21
 
-sudo docker-compose up -d --build mcsmjdk11 && sudo docker-compose logs mcsmjdk11
-sudo docker-compose up -d --build mcsmjdk11 && sudo docker-compose logs mcsmjdk11
-sudo docker-compose up -d --build mcsmjdk11 && sudo docker-compose logs mcsmjdk11
-sudo docker-compose up -d --build mcsmjdk11 && sudo docker-compose logs mcsmjdk11
+sudo docker-compose up -d --build mcsm-web && sudo docker-compose logs mcsm-web
+```
+
