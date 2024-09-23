@@ -1,7 +1,7 @@
 # open in GBK, not utf-8
-# »·¾³±äÁ¿²Ù×÷½Å±¾
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½
 
-# Ìí¼ÓÖµµ½Ö¸¶¨»·¾³±äÁ¿
+# ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 function Add-EnvValue {
     param (
         [string]$Name,
@@ -15,7 +15,7 @@ function Add-EnvValue {
     } else {
         [Environment]::SetEnvironmentVariable($Name, $Value, [EnvironmentVariableTarget]::User)
     }
-    Write-Host "ÒÑÌí¼ÓÖµµ½»·¾³±äÁ¿ $Name"
+    Write-Host "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ $Name"
 }
 
 function Sub-EnvValue {
@@ -31,9 +31,9 @@ function Sub-EnvValue {
         $values = $values | Where-Object { $_ -ne $Value }
         $newValue = $values -join ';'
         [System.Environment]::SetEnvironmentVariable($Name, $newValue, [System.EnvironmentVariableTarget]::User)
-        Write-Host "ÒÑ´Ó»·¾³±äÁ¿ $Name ÒÆ³ýÖµ$Value"
+        Write-Host "ï¿½Ñ´Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ $Name ï¿½Æ³ï¿½Öµ$Value"
     } else {
-        Write-Host "»·¾³±äÁ¿ $Name ²»´æÔÚ»òÎª¿Õ"
+        Write-Host "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ $Name ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½Îªï¿½ï¿½"
     }
 }
 
@@ -46,13 +46,13 @@ function Clear-EnvValue {
     $currentValue = [System.Environment]::GetEnvironmentVariable($Name, [System.EnvironmentVariableTarget]::User)
     if ($currentValue) {
         [Environment]::SetEnvironmentVariable($Name, "", [EnvironmentVariableTarget]::User)
-        Write-Host "»·¾³±äÁ¿ $Name ÒÑ±»Çå¿Õ"
+        Write-Host "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ $Name ï¿½Ñ±ï¿½ï¿½ï¿½ï¿½"
     } else {
-        Write-Host "»·¾³±äÁ¿ $Name ²»´æÔÚ"
+        Write-Host "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ $Name ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
     }
 }
 
-# ÁÐ³öËùÓÐ»·¾³±äÁ¿
+# ï¿½Ð³ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 function List-EnvironmentVariables {
     $envVars = [Environment]::GetEnvironmentVariables([EnvironmentVariableTarget]::User)
     $envVars.GetEnumerator() | Sort-Object Name | ForEach-Object {
@@ -71,13 +71,13 @@ function Show-EnvValue {
 
     $value = [System.Environment]::GetEnvironmentVariable($Name, [System.EnvironmentVariableTarget]::User)
     if ($value) {
-        Write-Host "»·¾³±äÁ¿ $Name µÄÖµÎª: "
+        Write-Host "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ $Name ï¿½ï¿½ÖµÎª: "
         $values = $value -split ';'
         for ($i = 0;$i -lt $values.Length;$i++) {
             Write-Host ("[{0, 2}]: {1}" -f ($i + 1), $values[$i])
         }
     } else {
-        Write-Host "»·¾³±äÁ¿ $Name ²»´æÔÚ»òÎª¿Õ"
+        Write-Host "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ $Name ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½Îªï¿½ï¿½"
     }
 }
 
@@ -89,28 +89,28 @@ function Backup-EnvValue {
     param (
         [string]$BackupType = "AutoBackup_"
     )    
-    # »ñÈ¡µ±Ç°Ê±¼ä²¢×ª»»ÎªÌØ¶¨¸ñÊ½µÄ×Ö·û´®
+    # ï¿½ï¿½È¡ï¿½ï¿½Ç°Ê±ï¿½ä²¢×ªï¿½ï¿½Îªï¿½Ø¶ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
     $currentDateTime = Get-Date -Format "yyyy_MM_dd_HH_mm_ss"
-    # Ö¸¶¨ÎÄ¼þÃû£¬°üº¬µ±Ç°Ê±¼ä×Ö·û´®
+    # Ö¸ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ê±ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
     $filename = "$BACKUP_DIR/$BackupType$currentDateTime.json"
-    # »ñÈ¡ËùÓÐ»·¾³±äÁ¿
+    # ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     # $envVars = @{
     #     "User" = [Environment]::GetEnvironmentVariables([EnvironmentVariableTarget]::User)
     #     "Machine" = [Environment]::GetEnvironmentVariables([EnvironmentVariableTarget]::Machine)
     # }
     $envVars = [Environment]::GetEnvironmentVariables([EnvironmentVariableTarget]::User)
-    # ½«»·¾³±äÁ¿×ª»»ÎªJSON¸ñÊ½
+    # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ÎªJSONï¿½ï¿½Ê½
     $jsonData = $envVars | ConvertTo-Json -Depth 4
 
-    # ¼ì²éÎÄ¼þ¼ÐÊÇ·ñ´æÔÚ
+    # ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
     if (-not (Test-Path -Path $BACKUP_DIR)) {
-        # ÎÄ¼þ¼Ð²»´æÔÚ£¬´´½¨Ëü
+        # ï¿½Ä¼ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         New-Item -ItemType Directory -Path $BACKUP_DIR
     }
 
-    # ½«JSONÊý¾ÝÐ´ÈëÎÄ¼þ
+    # ï¿½ï¿½JSONï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ä¼ï¿½
     $jsonData | Out-File -FilePath $filename -Encoding UTF8
-    Write-Host "»·¾³±äÁ¿ÒÑ±£´æµ½ $filename"
+    Write-Host "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½æµ½ $filename"
 }
 
 function ConvertTo-Hashtable {
@@ -120,7 +120,7 @@ function ConvertTo-Hashtable {
     )
     process {
         if ($null -eq $InputObject) { return $null }
-        if ($InputObject -is [System.Collections.IEnumerable] -and$InputObject -isnot [string]) {
+        if ($InputObject -is [System.Collections.IEnumerable] -and $InputObject -isnot [string]) {
             $collection = @(
                 foreach ($object in $InputObject) {
                     ConvertTo-Hashtable $object
@@ -146,42 +146,42 @@ function Compare-EnvValue {
     if ([string]::IsNullOrWhiteSpace($BackupType)) {
         $BackupType = "Manual"
     } 
-    # »ñÈ¡µ±Ç°Ä¿Â¼ÏÂËùÓÐÒÔ"Manual"¿ªÍ·µÄÎÄ¼þ
+    # ï¿½ï¿½È¡ï¿½ï¿½Ç°Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"Manual"ï¿½ï¿½Í·ï¿½ï¿½ï¿½Ä¼ï¿½
     $files = Get-ChildItem -Path $BACKUP_DIR -Filter "$BackupType*"
-    # Èç¹ûÕÒµ½ÁËÎÄ¼þ£¬Ôò¼ÌÐø²Ù×÷
+    # ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if ($files.Count -gt 0) {
-        # °´´´½¨Ê±¼ä½µÐòÅÅÁÐÎÄ¼þ£¬²¢Ñ¡Ôñ×îÐÂµÄÒ»¸ö
+        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä½µï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Ò»ï¿½ï¿½
         $latestFile = $files | Sort-Object CreationTime -Descending | Select-Object -First 1
-        # Êä³ö×îÐÂÎÄ¼þµÄÃû³Æ
-        Write-Output "×îÐÂBackupÎÄ¼þÊÇ: $($latestFile.Name)"
+        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        Write-Output "ï¿½ï¿½ï¿½ï¿½Backupï¿½Ä¼ï¿½ï¿½ï¿½: $($latestFile.Name)"
     } else {
-        # Èç¹ûÃ»ÓÐÕÒµ½ÎÄ¼þ£¬Êä³öÌáÊ¾ÐÅÏ¢
-        Write-Output "Ã»ÓÐÕÒµ½$BackupType BackupÎÄ¼þ¡£"
+        # ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ï¢
+        Write-Output "Ã»ï¿½ï¿½ï¿½Òµï¿½$BackupType Backupï¿½Ä¼ï¿½ï¿½ï¿½"
         return
     }
-    # ¶¨ÒåÖ®Ç°±£´æµÄJSONÎÄ¼þÂ·¾¶
+    # ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½ï¿½ï¿½ï¿½ï¿½JSONï¿½Ä¼ï¿½Â·ï¿½ï¿½
     $jsonFilePath = "$BACKUP_DIR/$latestFile"
     if (-not (Test-Path $jsonFilePath)) {
-        Write-Host "ÎÄ¼þ $jsonFilePath ²»´æÔÚ"
+        Write-Host "ï¿½Ä¼ï¿½ $jsonFilePath ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
         return
     }
-    # ¶ÁÈ¡JSONÎÄ¼þÖÐµÄ»·¾³±äÁ¿
+    # ï¿½ï¿½È¡JSONï¿½Ä¼ï¿½ï¿½ÐµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     $oldEnvVars = Get-Content -Raw -Path $jsonFilePath | ConvertFrom-Json | ConvertTo-Hashtable
-    # »ñÈ¡µ±Ç°µÄ»·¾³±äÁ¿
+    # ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     # $currentEnvVars = @{
     #     "User" = [Environment]::GetEnvironmentVariables([EnvironmentVariableTarget]::User)
     #     "Machine" = [Environment]::GetEnvironmentVariables([EnvironmentVariableTarget]::Machine)
     # }
     $currentEnvVars = [Environment]::GetEnvironmentVariables([EnvironmentVariableTarget]::User)
-    # ´´½¨Ò»¸ö¿ÕµÄÊý×éÀ´´æ´¢²îÒì
+    # ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½
     $differences = @()
-    # È¡³öÁ½¸ö¹þÏ£±íÖÐµÄËùÓÐ¼ü£¬²¢ºÏ²¢³ÉÊý×é
+    # È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     $allKeys = $oldEnvVars.Keys + $currentEnvVars.Keys | Sort-Object | Select-Object -Unique
 
-    # ±éÀúºÏ²¢ºóµÄ¼üÊý×é
-    # ¶Ô±È²îÒì
+    # ï¿½ï¿½ï¿½ï¿½ï¿½Ï²ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
+    # ï¿½Ô±È²ï¿½ï¿½ï¿½
     foreach ($key in $allKeys) {
-        # Èç¹ûÐèÒª£¬Ò²¿ÉÒÔ¼ì²éÃ¿¸ö¼üÊÇ·ñ´æÔÚÓÚ¹þÏ£±íÖÐ£¬²¢»ñÈ¡ÆäÖµ
+        # ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ò²ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ú¹ï¿½Ï£ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Öµ
         if (-not $currentEnvVars.ContainsKey($key)) {
             $differences += [PSCustomObject]@{
                 Variable = $key
@@ -201,7 +201,7 @@ function Compare-EnvValue {
         $oldValues = $oldEnvVars[$key] -split ';'
         $newValues = $currentEnvVars[$key] -split ';'
         $allValues = $oldValues + $newValues
-        # ±éÀúËùÓÐÖµ
+        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
         foreach ($value in $allValues) {
             if ( -not $oldValues.Contains($value)) {
                 $differences += [PSCustomObject]@{
@@ -219,30 +219,30 @@ function Compare-EnvValue {
         }
     }
     
-    # Êä³öÎª±í¸ñ
+    # ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
     $differences | Format-Table -AutoSize
-    # Èç¹ûÃ»ÓÐ²îÒì£¬Êä³öÏàÓ¦µÄÏûÏ¢
+    # ï¿½ï¿½ï¿½Ã»ï¿½Ð²ï¿½ï¿½ì£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ï¢
     if ($differences.Count -eq 0) {
-        Write-Host "Ã»ÓÐ¼ì²âµ½»·¾³±äÁ¿µÄ²îÒì¡£"
+        Write-Host "Ã»ï¿½Ð¼ï¿½âµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ì¡£"
     }
 }
 
 # help
 function Show-Help {
-    Write-Host "ÓÃ·¨: .\env-manage.ps1 <Command> [Name] [Value]"
+    Write-Host "ï¿½Ã·ï¿½: .\env-manage.ps1 <Command> [Name] [Value]"
     Write-Host "Command List:"
-    Write-Host "  add     - Ìí¼ÓÖµµ½Ö¸¶¨»·¾³±äÁ¿"
-    Write-Host "  sub     - ´ÓÖ¸¶¨»·¾³±äÁ¿ÒÆ³ýÖµ"
-    Write-Host "  show    - ÏÔÊ¾Ö¸¶¨»·¾³±äÁ¿µÄËùÓÐÖµ"
-    Write-Host "  clear   - Çå¿ÕÖ¸¶¨»·¾³±äÁ¿µÄÖµ"
-    Write-Host "  list    - ÁÐ³öËùÓÐ»·¾³±äÁ¿"
-    Write-Host "  cmp     - ¶Ô±ÈbackupÎÄ¼þ"
-    Write-Host "  backup  - ÊÖ¶¯´æ´¢ËùÓÐ»·¾³±äÁ¿"
-    Write-Host "  restore - ¸ù¾ÝÎÄ¼þ»¹Ô­»·¾³±äÁ¿(not implemented)"
+    Write-Host "  add     - ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ usage: .\script add [Name] [Value]"
+    Write-Host "  sub     - ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ³ï¿½Öµ usage: .\script sub [Name] [Value]"
+    Write-Host "  show    - ï¿½ï¿½Ê¾Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ usage: .\script show [Name]"
+    Write-Host "  clear   - ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ usage: .\script clear [Name]"
+    Write-Host "  list    - ï¿½Ð³ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ usage: .\script list"
+    Write-Host "  cmp     - ï¿½Ô±ï¿½backupï¿½Ä¼ï¿½ usage: .\script cmp [Manual|Auto]"
+    Write-Host "  backup  - ï¿½Ö¶ï¿½ï¿½æ´¢ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ usage: .\script backup"
+    Write-Host "  restore - ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(not implemented)"
 }
 
 function Run {
-    # ½âÎöÃüÁîÐÐ²ÎÊý
+    # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½
     param (
         [string]$Command,
         [string]$Name,
@@ -266,7 +266,7 @@ function Run {
             }
         }
     } catch {
-        Write-Host "·¢Éú´íÎó: $_"
+        Write-Host "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: $_"
         Show-Help
     }
 }
