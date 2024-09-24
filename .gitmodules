@@ -1,0 +1,3 @@
+[submodule "linux/LinuxMirrors"]
+	path = linux/LinuxMirrors
+	url = https://github.com/SuperManito/LinuxMirrors
