@@ -1,7 +1,11 @@
-## customtkinter
-原生python库的超美包装，有一大堆轮子，效率爆高，我不知道为什么这么冷门
+# customtkinter
+> [https://github.com/TomSchimansky/CustomTkinter](https://github.com/TomSchimansky/CustomTkinter)
 
-+ [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter)
+## 评价
++ 2024/9/24
+原生python库的超美包装，有一大堆轮子，效率爆高，我不知道为什么这么冷门
++ 2024/9/30
+版本之间不兼容，接口有的无法使用，说明与事实不符，冷门是有原因的
 
 ## 轮子
 #### 组件

@@ -10,10 +10,10 @@
 # Show-Help
 
 param (
-    [string]$Command=$args[0],
+    [string]$Command = $args[0],
     [string]$Name,
     [string]$Value,
-    [string]$With,
+    [string]$With = $args[1],
     [bool]$Json = $false
 )
 
@@ -293,10 +293,10 @@ function Show-Help {
         "restore" = "Restore environment variables from backup file"
     }
     $usage = @{
-        "add" = "add [Name] [Value]"
-        "sub" = "sub [Name] [Value]"
-        "show" = "show [Name]"
-        "clear" = "clear [Name]"
+        "add" = "add [-Name <Name>] [-Value <Value>]"
+        "sub" = "sub [-Name <Name>] [-Value <Value>]"
+        "show" = "show [-Name <Name>]"
+        "clear" = "clear [-Name <Name>]"
         "list" = "list"
         "cmp" = "cmp [Manual|Auto|Restore]"
         "backup" = "backup"
