@@ -1,116 +1,97 @@
-# Add-EnvValue
-# Sub-EnvValue
-# Clear-EnvValue
-# List-EnvValues
-
-# Backup-EnvValue
-# Compare-EnvValue
-# Restore-EnvValue
-
-# Show-Help
-
 param (
-    [string]$Command = $args[0],
-    [string]$Name,
-    [string]$Value,
-    [string]$With = $args[1],
+    [Parameter(Position = 0, Mandatory = $true)][string]$Command = $args[0],
+    [Parameter(Position = 1, Mandatory = $false)][string]$With,
+    [string]$Name = $null,
+    [string]$Value = $null,
     [bool]$Json = $false
 )
 
-function Write-Debug {
-    param (
-        [string]$Info,
-        [bool]$IsData = $false
-    )
-    if ( -not $Json -and -not $IsData ) {
-        Write-Host $Info
-    } elseif ( $Json -and -not $IsData ) {
-        
-    } elseif ( $Json -and $IsData ) {
-        Write-Host ($Info | ConvertTo-Json -Depth 4)
-    } else {
-        Write-Host $Info
-    }
-}
 
 function Add-EnvValue {
-    param (
-        [string]$Name,
-        [string]$Value
-    )
     Backup-EnvValue
 
     $currentValue = [Environment]::GetEnvironmentVariable($Name, [EnvironmentVariableTarget]::User)
     if ($currentValue) {
         [Environment]::SetEnvironmentVariable($Name, "$currentValue;$Value", [EnvironmentVariableTarget]::User)
-    } else {
+    }
+    else {
         [Environment]::SetEnvironmentVariable($Name, $Value, [EnvironmentVariableTarget]::User)
     }
     Write-Host "Successful add $Name"
 }
 
 function Sub-EnvValue {
-    param (
-        [string]$Name,
-        [string]$Value
-    )
     Backup-EnvValue
 
-    $currentValue = [System.Environment]::GetEnvironmentVariable($Name, [System.EnvironmentVariableTarget]::User)
+    $currentValue = [Environment]::GetEnvironmentVariable($Name, [EnvironmentVariableTarget]::User)
     if ($currentValue) {
         $values = $currentValue.Split(';')
-        $values = $values | Where-Object { $_ -ne $Value }
-        $newValue = $values -join ';'
-        [System.Environment]::SetEnvironmentVariable($Name, $newValue, [System.EnvironmentVariableTarget]::User)
-        Write-Host "Successful sub $Name $Value"
-    } else {
-        Write-Host "No Variable Named $Name "
+        if ($values -contains $Value) {
+            $values = $values | Where-Object { $_ -ne $Value }
+            $newValue = $values -join ';'
+            [Environment]::SetEnvironmentVariable($Name, $newValue, [EnvironmentVariableTarget]::User)
+            Write-Host "Successful sub $Name $Value"
+        }
+        else {
+            Write-Warning "No Value $Value in $Name"
+        }
+    }
+    else {
+        Write-Warning "No Variable Named $Name "
     }
 }
 
 function Clear-EnvValue {
-    param (
-        [string]$Name
-    )
     Backup-EnvValue
 
     $currentValue = [System.Environment]::GetEnvironmentVariable($Name, [System.EnvironmentVariableTarget]::User)
     if ($currentValue) {
         [Environment]::SetEnvironmentVariable($Name, "", [EnvironmentVariableTarget]::User)
         Write-Host "Successful set $Name"
-    } else {
-        Write-Host "No Variable Named $Name"
+    }
+    else {
+        Write-Warning "No Variable Named $Name"
     }
 }
 
-function List-EnvValues {
-    param (
-        [string]$Info,
-        [string]$Json = $false
-    )
+function List {
     $envVars = [Environment]::GetEnvironmentVariables([EnvironmentVariableTarget]::User)
-    $envVars.GetEnumerator() | Sort-Object Name | ForEach-Object {
-        $name = $_.Name
-        $values = $_.Value -split ';'
-        for ($i = 0;$i -lt $values.Length;$i++) {
-            Write-Debug ("[{0, 20}][{1, 2}]: {2}" -f $name, ($i + 1), $values[$i]) -IsData $true
+    if ($Json) {
+        $outputJson = @{}
+        $envVars.GetEnumerator() | Sort-Object Name | ForEach-Object {
+            $name = $_.Name
+            $values = $_.Value -split ';'
+            $outputJson[$name] = $values
+        }
+        Write-Host ( $outputJson | ConvertTo-Json -Depth 100 )
+    }
+    else {
+        $envVars.GetEnumerator() | Sort-Object Name | ForEach-Object {
+            $name = $_.Name
+            $values = $_.Value -split ';'
+            for ($i = 0; $i -lt $values.Length; $i++) {
+                Write-Host ("[{0, 20}][{1, 2}]: {2}" -f $name, ($i + 1), $values[$i])
+            }
         }
     }
 }
 
 function Show-EnvValue {
-    param (
-        [string]$Name
-    )
-    $value = [System.Environment]::GetEnvironmentVariable($Name, [System.EnvironmentVariableTarget]::User)
+    $value = [Environment]::GetEnvironmentVariable($Name, [EnvironmentVariableTarget]::User)
     if ($value) {
-        Write-Debug "Successful show $Name"
+        Write-Host "Successful show $Name"
         $values = $value -split ';'
-        for ($i = 0;$i -lt $values.Length;$i++) {
-            Write-Debug ("[{0, 2}]: {1}" -f ($i + 1), $values[$i])
+        if ($Json) {
+            Write-Host ( $values | ConvertTo-Json -Depth 100 )
         }
-    } else {
-        Write-Debug "No Variable Named $Name "
+        else {
+            for ($i = 0; $i -lt $values.Length; $i++) {
+                Write-Host ("[{0, 2}]: {1}" -f ($i + 1), $values[$i])
+            }
+        }
+    }
+    else {
+        Write-Warning "No Variable Named $Name "
     }
 }
 
@@ -139,8 +120,7 @@ function Backup-EnvValue {
 
 function ConvertTo-Hashtable {
     param (
-        [Parameter(ValueFromPipeline)]
-        $InputObject
+        [Parameter(ValueFromPipeline)]$InputObject
     )
     process {
         if ($null -eq $InputObject) { return $null }
@@ -151,13 +131,15 @@ function ConvertTo-Hashtable {
                 }
             )
             Write-Output -NoEnumerate $collection
-        } elseif ($InputObject -is [psobject]) {
+        }
+        elseif ($InputObject -is [psobject]) {
             $hashTable = @{}
             foreach ($property in $InputObject.PSObject.Properties) {
                 $hashTable[$property.Name] = ConvertTo-Hashtable $property.Value
             }
             $hashTable
-        } else {
+        }
+        else {
             $InputObject
         }
     }
@@ -166,25 +148,30 @@ function ConvertTo-Hashtable {
 
 function Compare-EnvValue {
     param (
-        [string]$BackupType,
-        [string]$OutputType = "Table"
-    ) 
+        [string]$BackupType 
+    )
     if ([string]::IsNullOrWhiteSpace($BackupType)) {
         $BackupType = "Manual"
     } 
-    Write-Output "Compare Mode: [$($BackupType)]"
+    if (-not $Json) {
+        Write-Output "Compare Mode: [$($BackupType)]"
+    }
+
     $files = Get-ChildItem -Path $BACKUP_DIR -Filter "$BackupType*"
     if ($files.Count -gt 0) {
         $latestFile = $files | Sort-Object CreationTime -Descending | Select-Object -First 1
-        Write-Output "Found Backup: $($latestFile.Name)"
-    } else {
-        Write-Output "There is no $BackupType Backup file found."
+        if (-not $Json) {
+            Write-Output "Found Backup: $($latestFile.Name)"
+        }
+    }
+    else {
+        Write-Warning "There is no $BackupType Backup file found."
         return
     }
     # JSON
     $jsonFilePath = "$BACKUP_DIR/$latestFile"
     if (-not (Test-Path $jsonFilePath)) {
-        Write-Host "File $jsonFilePath Not Found."
+        Write-Warning "File $jsonFilePath Not Found."
         return
     }
     $oldEnvVars = Get-Content -Raw -Path $jsonFilePath | ConvertFrom-Json | ConvertTo-Hashtable
@@ -199,16 +186,16 @@ function Compare-EnvValue {
         if (-not $currentEnvVars.ContainsKey($key)) {
             $differences += [PSCustomObject]@{
                 Variable = $key
-                Update = "Delete Variable"
-                Value = $oldEnvVars[$key]
+                Update   = "Delete Variable"
+                Value    = $oldEnvVars[$key]
             }
             continue
         } 
         if (-not $oldEnvVars.ContainsKey($key)) {
             $differences += [PSCustomObject]@{
                 Variable = $key
-                Update = "New Variable"
-                Value = $currentEnvVars[$key]
+                Update   = "New Variable"
+                Value    = $currentEnvVars[$key]
             }
             continue
         } 
@@ -219,30 +206,28 @@ function Compare-EnvValue {
             if ( -not $oldValues.Contains($value)) {
                 $differences += [PSCustomObject]@{
                     Variable = $key
-                    Update = "New Value"
-                    Value = $value
+                    Update   = "New Value"
+                    Value    = $value
                 }
-            } elseif ( -not $newValues.Contains($value)) {
+            }
+            elseif ( -not $newValues.Contains($value)) {
                 $differences += [PSCustomObject]@{
                     Variable = $key
-                    Update = "Delete Value"
-                    Value = $value
+                    Update   = "Delete Value"
+                    Value    = $value
                 }
             }
         }
     }
 
-    if ($differences.Count -eq 0) {
-        Write-Host "No changes found."
-        return
+    if ($Json) {
+        return $differences | ConvertTo-Json -Depth 100
     }
-
-    if ($OutputType -eq "Table") {
+    else {
+        if ($differences.Count -eq 0) {
+            Write-Host "No changes found."
+        }
         return $differences | Format-Table -AutoSize
-    } elseif ($OutputType -eq "Json") {
-        return $differences | ConvertTo-Json -Depth 4
-    } else {
-        return $differences
     }
 }
 
@@ -260,7 +245,8 @@ function Restore-EnvValue {
     if ($files.Count -gt 0) {
         $latestFile = $files | Sort-Object CreationTime -Descending | Select-Object -First 1
         Write-Output "Found Backup: $($latestFile.Name)"
-    } else {
+    }
+    else {
         Write-Output "There is no $BackupType Backup file found."
         return
     }
@@ -283,23 +269,23 @@ function Restore-EnvValue {
 # help
 function Show-Help {
     $desc = @{
-        "add" = "Add value to environment variable"
-        "sub" = "Sub value from environment variable"
-        "show" = "Show environment variable"
-        "clear" = "Clear environment variable"
-        "list" = "List all user environment variables"
-        "cmp" = "Compare with backup file"
-        "backup" = "Backup environment variables to file"
+        "add"     = "Add value to environment variable"
+        "sub"     = "Sub value from environment variable"
+        "show"    = "Show environment variable"
+        "clear"   = "Clear environment variable"
+        "list"    = "List all user environment variables"
+        "cmp"     = "Compare with backup file"
+        "backup"  = "Backup environment variables to file"
         "restore" = "Restore environment variables from backup file"
     }
     $usage = @{
-        "add" = "add [-Name <Name>] [-Value <Value>]"
-        "sub" = "sub [-Name <Name>] [-Value <Value>]"
-        "show" = "show [-Name <Name>]"
-        "clear" = "clear [-Name <Name>]"
-        "list" = "list"
-        "cmp" = "cmp [Manual|Auto|Restore]"
-        "backup" = "backup"
+        "add"     = "add -Name <Name> -Value <Value>"
+        "sub"     = "sub -Name <Name> -Value <Value>"
+        "show"    = "show -Name <Name> [-Json $true]"
+        "clear"   = "clear -Name <Name>"
+        "list"    = "list [-Json $true]"
+        "cmp"     = "cmp [Manual|Auto|Restore] [-Json $true]"
+        "backup"  = "backup"
         "restore" = "restore [Manual|Auto|Restore]"
     }
     Write-Host "usage: .\gEnvCtrl.ps1 <Command> [Name] [Value]"
@@ -307,30 +293,28 @@ function Show-Help {
     $keys = $desc.Keys | Sort-Object
     foreach ($key in $keys) {
         $table += [PSCustomObject]@{
-            Command = $key
+            Command     = $key
             Description = ("{0, 7}" -f $desc[$key])
-            Usage = (".\gEnvCtrl.ps1 {0}" -f $usage[$key])
+            Usage       = (".\gEnvCtrl.ps1 {0}" -f $usage[$key])
         }
     }
     $table | Format-Table -AutoSize
 }
 
-
 try {
     switch ($Command) {
-        "add" { Add-EnvValue -Name $Name -Value $Value }
-        "sub" { Sub-EnvValue -Name $Name -Value $Value }
-        "show" { Show-EnvValue -Name $Name }
-        "clear" { Clear-EnvValue -Name $Name }
-        "list" { List-EnvValues }
+        "add" { Add-EnvValue }
+        "sub" { Sub-EnvValue }
+        "show" { Show-EnvValue }
+        "clear" { Clear-EnvValue }
+        "list" { List }
         "cmp" { Compare-EnvValue -BackupType $With }
         "backup" { Backup-EnvValue -BackupType "ManualBackup_" }
         "restore" { Restore-EnvValue -BackupType $With }
-        default { 
-            Show-Help 
-        }
+        default { Show-Help }
     }
-} catch {
-    Write-Host "ERROR: $_"
+}
+catch {
+    Write-Warning "ERROR: $_"
     Show-Help
 }

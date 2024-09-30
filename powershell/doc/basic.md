@@ -5,6 +5,7 @@
 - `$PSScriptRoot`：当前脚本所在的目录路径。
 - `$PSCommandPath`：当前脚本的完整路径。
 - `$PSVersionTable`：包含 PowerShell 版本信息的哈希表。
+- `$PSCmdlet`: 是一个在自定义 cmdlet（即通过 CmdletBinding 特性定义的函数）中使用的自动化变量。它提供了对当前运行的 cmdlet 的引用，使你能够访问和操作当前 cmdlet 的上下文和属性。
 - `@{}`：创建哈希表。
 - `@()`：创建数组。
 
